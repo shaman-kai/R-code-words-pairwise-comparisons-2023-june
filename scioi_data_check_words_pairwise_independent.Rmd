@@ -1,0 +1,105 @@
+---
+title: "Data check word onsets pairwise comparisons"
+author: "Kai Shaman"
+date: "07-06-2023"
+---
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(rstatix)
+library(tibble)
+library(dplyr)
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+directory <- getwd() # get path to directory with files
+words <- read.csv("My_table.csv")
+```
+# ANOVA TABLES
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+res.aov1 <- anova_test(data = words, dv = is_noun, wid = word, between = valence_type)
+a1 <- get_anova_table(res.aov1)
+res.aov2 <- anova_test(data = words, dv = letters, wid = word, between = valence_type)
+a2 <- get_anova_table(res.aov2)
+res.aov3 <- anova_test(data = words, dv = syllables, wid = word, between = valence_type)
+a3 <- get_anova_table(res.aov3)
+res.aov4 <- anova_test(data = words, dv = frequency_norm, wid = word, between = valence_type)
+a4 <- get_anova_table(res.aov4)
+res.aov5 <- anova_test(data = words, dv = neighbors, wid = word, between = valence_type)
+a5 <- get_anova_table(res.aov5)
+res.aov6 <- anova_test(data = words, dv = valence_rohr, wid = word, between = valence_type)
+a6 <- get_anova_table(res.aov6)
+res.aov7 <- anova_test(data = words, dv = arousal_rohr, wid = word, between = valence_type)
+a7 <- get_anova_table(res.aov7)
+res.aov8 <- anova_test(data = words, dv = valence_bawl, wid = word, between = valence_type)
+a8 <- get_anova_table(res.aov8)
+res.aov9 <- anova_test(data = words, dv = arousal_bawl, wid = word, between = valence_type)
+a9 <- get_anova_table(res.aov9)
+res.aov10 <- anova_test(data = words, dv = descriptiveness_rohr, wid = word, between = valence_type)
+a10 <- get_anova_table(res.aov10)
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+anova_tables <- rbind(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10)
+measures <- c("is_noun","letters","syllables","frequency_norm","neighbors","valence_rohr","arousal_rohr","valence_bawl","arousal_bawl","descriptiveness_rohr")
+anova_tables <- cbind(measures, anova_tables)
+anova_tables
+```
+# Pairwise t-test for independent groups
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+nouns <- words %>% 
+  pairwise_t_test(is_noun ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+nouns
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+letter_length <- words %>%
+  pairwise_t_test(letters ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+letter_length
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+syllables_length <- words %>%
+  pairwise_t_test(syllables ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+syllables_length
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+frequency <- words %>%
+  pairwise_t_test(frequency_norm ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+frequency
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+neighborhood <- words %>%
+  pairwise_t_test(neighbors ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+neighborhood
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+descriptiveness <- words %>%
+  pairwise_t_test(descriptiveness_rohr ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+descriptiveness
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+rohr_valence <- words %>%
+  pairwise_t_test(valence_rohr ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+rohr_valence
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bawl_valence <- words %>%
+  pairwise_t_test(valence_bawl ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+bawl_valence
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+rohr_arousal <- words %>%
+  pairwise_t_test(arousal_rohr ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+rohr_arousal
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bawl_arousal <- words %>%
+  pairwise_t_test(arousal_bawl ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+bawl_arousal
+```

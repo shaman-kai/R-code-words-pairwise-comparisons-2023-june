@@ -1,0 +1,73 @@
+---
+title: "Data check word onsets pairwise comparisons"
+author: "Kai Shaman"
+date: "07-06-2023"
+---
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(rstatix)
+library(tibble)
+library(dplyr)
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+directory <- getwd() # get path to directory with files
+onsets <- read.csv("final_onsets_offsets_duration_copy2.csv")
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+res.aov1 <- anova_test(data = onsets, dv = onset_audio_female, wid = word, between = valence_type)
+o1 <- get_anova_table(res.aov1)
+res.aov2 <- anova_test(data = onsets, dv = onset_audio_male, wid = word, between = valence_type)
+o2 <- get_anova_table(res.aov2)
+res.aov3 <- anova_test(data = onsets, dv = onset_mean, wid = word, between = valence_type)
+o3 <- get_anova_table(res.aov3)
+res.aov1 <- anova_test(data = onsets, dv = duration_female, wid = word, between = valence_type)
+d1 <- get_anova_table(res.aov1)
+res.aov2 <- anova_test(data = onsets, dv = duration_male, wid = word, between = valence_type)
+d2 <- get_anova_table(res.aov2)
+res.aov3 <- anova_test(data = onsets, dv = duration_mean, wid = word, between = valence_type)
+d3 <- get_anova_table(res.aov3)
+```
+# ANOVA TABLES
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+anova_tables <- rbind(o1,o2,o3,d1,d2,d3)
+measures <- c("onset_female","onset_male","onset","duration_female","duration_male","duration")
+anova_tables <- cbind(measures, anova_tables)
+anova_tables
+```
+# Pairwise t-test for independent groups
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+fem_onset <- onsets %>%
+  pairwise_t_test(onset_audio_female ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+fem_onset
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+male_onset <- onsets %>%
+  pairwise_t_test(onset_audio_male ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+male_onset
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+mean_onset <- onsets %>%
+  pairwise_t_test(onset_mean ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+mean_onset
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+fem_duration <- onsets %>%
+  pairwise_t_test(duration_female ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+fem_duration
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+male_duration <- onsets %>%
+  pairwise_t_test(duration_male ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+male_duration
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+mean_duration <- onsets %>%
+  pairwise_t_test(duration_mean ~ valence_type, paired = FALSE, pool.sd = FALSE, p.adjust.method = "bonferroni")
+mean_duration
+```
